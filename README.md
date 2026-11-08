@@ -38,7 +38,7 @@ Built for the **CloudQA Senior AI Automation Architect & SDET** technical assess
 2. **Synthetic AI DOM Tagging**: Dynamically annotates interactive elements (`<input>`, `<button>`, `<select>`, `<a>`) with `data-ai-id='ref_X'`, extracting associated labels, placeholders, and roles into a compact JSON snapshot.
 3. **Multi-Tier Semantic Locators**: Prioritizes accessible roles, associated labels, placeholders, and text over brittle dynamic CSS classes or fixed XPaths.
 4. **Zero-Lockout Fallback**: Uses Groq LLaMA 3.3 for high-speed reasoning, with a deterministic offline heuristic parser so tests never crash even if an API key is absent.
-5. **Multi-Site Generalization**: Validated against both **PHPTravels demo** (`https://phptravels.net`) and a completely distinct second website (**CloudQA Automation Practice Form**).
+5. **Multi-Site Generalization**: Validated against both **PHPTravels demo** (`https://phptravels.net`) and a completely distinct second website (**SauceDemo E-Commerce** `https://www.saucedemo.com`).
 6. **Executive Reporting**: Generates interactive HTML reports with step timelines, elapsed milliseconds, and step screenshots.
 
 ---
@@ -82,17 +82,12 @@ python runner.py
 python runner.py --site phptravels
 ```
 
-### 2. CloudQA Automation Practice Form (Second Demo Site)
-```powershell
-python runner.py --site cloudqa
-```
-
-### 3. SauceDemo E-Commerce Site (Third Demo Site)
+### 2. SauceDemo E-Commerce Site (Second Demo Site)
 ```powershell
 python runner.py --site saucedemo
 ```
 
-### 4. Any Custom Unseen Website on the Fly
+### 3. Any Custom Unseen Website on the Fly
 You can pass any plain-English instruction directly as a parameter:
 ```powershell
 python runner.py "Go to https://www.saucedemo.com, Type standard_user into Username, Click Login"

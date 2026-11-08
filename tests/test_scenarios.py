@@ -2,7 +2,7 @@
 Comprehensive Automated Test Suite for AI Test Runner.
 Validates:
 1. Canonical PHPTravels Customer Login Flow
-2. Second Target Website (CloudQA Practice Form)
+2. Second Target Website (SauceDemo E-Commerce)
 3. 10 Diverse Unseen Natural Language Instructions
 """
 
@@ -37,11 +37,11 @@ def test_unseen_instructions_suite():
         "Go to https://phptravels.net/login, Type test@example.com into Email, Click Sign In",
         "Open https://phptravels.net, Click Login, Verify that the form is shown",
         "Navigate to https://example.com, Verify that Example Domain is visible",
-        "Go to https://app.cloudqa.io/home/AutomationPracticeForm, Type John into First Name",
-        "Open https://app.cloudqa.io/home/AutomationPracticeForm, Type Doe into Last Name",
-        "Go to https://app.cloudqa.io/home/AutomationPracticeForm, Select Male for gender",
+        "Go to https://www.saucedemo.com, Type standard_user into Username",
+        "Open https://www.saucedemo.com, Type secret_sauce into Password",
+        "Go to https://www.saucedemo.com, Click Login",
         "Visit https://phptravels.net/login, Enter password secret123 into Password",
-        "Open https://app.cloudqa.io/home/AutomationPracticeForm, Check agreement",
+        "Open https://www.saucedemo.com, Check Remember Me",
         "Go to https://phptravels.net/login, Verify URL contains /login",
         "Open https://example.com, Assert text 'Example Domain' exists"
     ]

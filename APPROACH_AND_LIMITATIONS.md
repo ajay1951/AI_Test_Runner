@@ -37,7 +37,7 @@ We combined the precision of DOM inspection with the semantic reasoning of Large
 
 To guarantee the tool does not rely on hardcoded selectors for a single domain:
 - **PHPTravels (`https://phptravels.net`)**: Verified against customer login, checkboxes, and dashboard redirection.
-- **Second Website (`https://app.cloudqa.io/home/AutomationPracticeForm`)**: Validated against form inputs, radio gender selectors, state dropdowns, and submission validation.
+- **Second Website (`https://www.saucedemo.com`)**: Validated against standard e-commerce authentication, input forms, dynamic button states, and URL navigation assertions (`/inventory.html`).
 - **10 Unseen Cases**: Tested across distinct grammatical structures, varied imperative verbs (*Type, Enter, Select, Check, Verify, Assert*), and compound clauses.
 
 ---
