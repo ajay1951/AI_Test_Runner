@@ -1,0 +1,27 @@
+# Environment Variables & Secrets
+.env
+*.env.local
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Execution Artifacts (Keep folders clean)
+screenshots/*.png
+reports/*.html
+reports/*.json
+!reports/.gitkeep
+!screenshots/.gitkeep
+
+# OS Artifacts
+.DS_Store
+Thumbs.db
+

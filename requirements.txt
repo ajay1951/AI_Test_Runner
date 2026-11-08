@@ -1,0 +1,7 @@
+playwright
+openai
+pydantic
+python-dotenv
+pytest
+rich
+jinja2
