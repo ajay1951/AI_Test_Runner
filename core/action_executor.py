@@ -192,6 +192,11 @@ class ActionExecutor:
                     elif action.action_type == ActionType.CLICK:
                         loc = self.page.locator("button, a, [role='button'], input[type='submit'], input[type='button']").filter(has_text=txt)
                         if loc.count() == 0:
+                            # Support common authentication/submission synonyms
+                            txt_lower = txt.lower()
+                            if any(k in txt_lower for k in ["login", "sign in", "log in", "signin", "submit"]):
+                                loc = self.page.locator("button[type='submit'], input[type='submit'], button:has-text('Sign In'), button:has-text('Login'), button:has-text('Log In')")
+                        if loc.count() == 0:
                             loc = self.page.get_by_text(txt, exact=False)
                     else:
                         loc = self.page.get_by_text(txt, exact=False)
@@ -269,10 +274,11 @@ class ActionExecutor:
                     self._validate_element_compatibility(loc, act_type)
                     loc.scroll_into_view_if_needed()
                     try:
-                        loc.fill(action.value or "", timeout=action.timeout_ms)
+                        loc.fill(action.value or "", timeout=min(action.timeout_ms, 3000))
                     except Exception:
-                        loc.click(force=True)
-                        loc.fill(action.value or "")
+                        self._dismiss_overlays()
+                        loc.click(force=True, timeout=2000)
+                        loc.fill(action.value or "", timeout=3000)
                     result["success"] = True
                     return result
 
@@ -283,8 +289,9 @@ class ActionExecutor:
                     self._validate_element_compatibility(loc, act_type)
                     loc.scroll_into_view_if_needed()
                     try:
-                        loc.click(timeout=action.timeout_ms)
+                        loc.click(timeout=min(action.timeout_ms, 3000))
                     except Exception:
+                        self._dismiss_overlays()
                         loc.click(force=True, timeout=3000)
                     result["success"] = True
                     return result
