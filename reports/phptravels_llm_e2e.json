@@ -1,0 +1,126 @@
+{
+  "title": "PHPTravels Strict LLM End-to-End Authentication Workflow",
+  "timestamp": "2026-11-09 13:05:19",
+  "model": "openai/gpt-oss-20b",
+  "strict_mode": true,
+  "fallback_used": false,
+  "overall_passed": true,
+  "duration_sec": 58.34,
+  "total_steps": 7,
+  "passed_count": 7,
+  "failed_count": 0,
+  "steps": [
+    {
+      "instruction": "Open login page",
+      "action": "navigate",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "attempts": 2,
+      "rationale": "Open login page",
+      "success": true,
+      "assertion_result": null,
+      "error": "Page.goto: Timeout 10000ms exceeded.\nCall log:\n  - navigating to \"https://phptravels.net/login\", waiting until \"domcontentloaded\"\n",
+      "screenshot": "screenshots/llm_e2e_step_1_1794209676.png",
+      "duration_ms": 14146.69
+    },
+    {
+      "instruction": "Enter customer email",
+      "action": "fill",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "attempts": 1,
+      "rationale": "Enter customer email",
+      "success": true,
+      "assertion_result": null,
+      "error": null,
+      "screenshot": "screenshots/llm_e2e_step_2_1794209678.png",
+      "duration_ms": 1862.0
+    },
+    {
+      "instruction": "Enter password",
+      "action": "fill",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "attempts": 1,
+      "rationale": "Enter password",
+      "success": true,
+      "assertion_result": null,
+      "error": null,
+      "screenshot": "screenshots/llm_e2e_step_3_1794209681.png",
+      "duration_ms": 2879.31
+    },
+    {
+      "instruction": "Submit login form",
+      "action": "click",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "attempts": 1,
+      "rationale": "Submit login form",
+      "success": true,
+      "assertion_result": null,
+      "error": null,
+      "screenshot": "screenshots/llm_e2e_step_4_1794209713.png",
+      "duration_ms": 32090.19
+    },
+    {
+      "instruction": "Verify URL contains /dashboard",
+      "action": "assert_url",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "attempts": 1,
+      "rationale": "Verify URL contains /dashboard",
+      "success": true,
+      "assertion_result": {
+        "type": "URL",
+        "expected": "/dashboard",
+        "actual": "https://phptravels.net/dashboard",
+        "passed": true
+      },
+      "error": null,
+      "screenshot": "screenshots/llm_e2e_step_5_1794209714.png",
+      "duration_ms": 1054.82
+    },
+    {
+      "instruction": "Verify title contains Dashboard",
+      "action": "assert_title",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "attempts": 1,
+      "rationale": "Verify title contains Dashboard",
+      "success": true,
+      "assertion_result": {
+        "type": "Title",
+        "expected": "Dashboard",
+        "actual": "Dashboard",
+        "passed": true
+      },
+      "error": null,
+      "screenshot": "screenshots/llm_e2e_step_6_1794209714.png",
+      "duration_ms": 221.01
+    },
+    {
+      "instruction": "Verify Account Summary is visible",
+      "action": "assert_visible",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "attempts": 1,
+      "rationale": "Verify Account Summary is visible",
+      "success": true,
+      "assertion_result": {
+        "type": "Visibility",
+        "target": "Account Summary",
+        "passed": true
+      },
+      "error": null,
+      "screenshot": "screenshots/llm_e2e_step_7_1794209717.png",
+      "duration_ms": 2316.2
+    }
+  ]
+}

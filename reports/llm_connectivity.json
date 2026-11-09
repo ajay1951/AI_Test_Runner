@@ -1,0 +1,10 @@
+{
+  "api_key_configured": true,
+  "model": "openai/gpt-oss-20b",
+  "accessible": true,
+  "status": "PASS",
+  "error_type": null,
+  "message": "Successfully connected to openai/gpt-oss-20b",
+  "raw_response": "{\"status\":\"ok\"}",
+  "latency_ms": 2111.97
+}

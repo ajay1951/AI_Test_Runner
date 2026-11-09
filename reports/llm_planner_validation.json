@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-11-09T13:04:21.333628",
+  "model": "openai/gpt-oss-20b",
+  "instruction": "Open https://phptravels.net/login, enter customer email user@phptravels.com, enter password demouser, click Sign In, verify that URL contains /dashboard, verify that title contains Dashboard, verify that Account Summary is visible",
+  "planning_duration_ms": 5086.97,
+  "actions_generated_count": 7,
+  "actions": [
+    {
+      "step": 1,
+      "action_type": "navigate",
+      "value": "https://phptravels.net/login",
+      "expected_text": null,
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "reasoning": "Open login page"
+    },
+    {
+      "step": 2,
+      "action_type": "fill",
+      "value": "user@phptravels.com",
+      "expected_text": null,
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "reasoning": "Enter customer email"
+    },
+    {
+      "step": 3,
+      "action_type": "fill",
+      "value": "********",
+      "expected_text": null,
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "reasoning": "Enter password"
+    },
+    {
+      "step": 4,
+      "action_type": "click",
+      "value": null,
+      "expected_text": null,
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "reasoning": "Submit login form"
+    },
+    {
+      "step": 5,
+      "action_type": "assert_url",
+      "value": null,
+      "expected_text": "/dashboard",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "reasoning": "Verify URL contains /dashboard"
+    },
+    {
+      "step": 6,
+      "action_type": "assert_title",
+      "value": null,
+      "expected_text": "Dashboard",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "reasoning": "Verify title contains Dashboard"
+    },
+    {
+      "step": 7,
+      "action_type": "assert_visible",
+      "value": null,
+      "expected_text": "Account Summary",
+      "planner_type": "llm",
+      "model": "openai/gpt-oss-20b",
+      "fallback_used": false,
+      "reasoning": "Verify Account Summary is visible"
+    }
+  ],
+  "strict_mode_validated": true,
+  "zero_fallback_verified": true
+}

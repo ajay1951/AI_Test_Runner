@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PHPTravels Strict LLM E2E Report</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 30px; background: #0f172a; color: #f8fafc; }
+        h1, h2 { color: #38bdf8; }
+        .card { background: #1e293b; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #334155; }
+        th { background: #0ea5e9; color: white; }
+        tr:hover { background: #334155; }
+    </style>
+</head>
+<body>
+    <h1>PHPTravels Strict LLM End-to-End Execution</h1>
+    <div class="card">
+        <p><strong>Model:</strong> openai/gpt-oss-20b | <strong>Strict LLM Mode:</strong> True | <strong>Fallback Used:</strong> False</p>
+        <p><strong>Status:</strong> <span style="background:#10b981;color:#fff;padding:4px 10px;border-radius:4px;font-weight:bold;">PASSED</span></p>
+        <p><strong>Total Duration:</strong> 58.34s | <strong>Steps Executed:</strong> 7</p>
+    </div>
+    <h2>Step-by-Step Execution Log</h2>
+    <table>
+        <thead>
+            <tr><th>#</th><th>Action</th><th>Provenance</th><th>Instruction</th><th>Status</th><th>Duration</th><th>Evidence</th></tr>
+        </thead>
+        <tbody>
+    <tr>
+        <td>1</td>
+        <td><strong>navigate</strong></td>
+        <td><span style="background:#1e3a8a;color:#93c5fd;padding:2px 8px;border-radius:4px;font-family:monospace;">llm (openai/gpt-oss-20b)</span></td>
+        <td>Open login page</td>
+        <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+        <td>14146.69ms</td>
+        <td><img src='../screenshots/llm_e2e_step_1_1794209676.png' style='max-width:250px; border-radius:4px;'/></td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td><strong>fill</strong></td>
+        <td><span style="background:#1e3a8a;color:#93c5fd;padding:2px 8px;border-radius:4px;font-family:monospace;">llm (openai/gpt-oss-20b)</span></td>
+        <td>Enter customer email</td>
+        <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+        <td>1862.0ms</td>
+        <td><img src='../screenshots/llm_e2e_step_2_1794209678.png' style='max-width:250px; border-radius:4px;'/></td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td><strong>fill</strong></td>
+        <td><span style="background:#1e3a8a;color:#93c5fd;padding:2px 8px;border-radius:4px;font-family:monospace;">llm (openai/gpt-oss-20b)</span></td>
+        <td>Enter password</td>
+        <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+        <td>2879.31ms</td>
+        <td><img src='../screenshots/llm_e2e_step_3_1794209681.png' style='max-width:250px; border-radius:4px;'/></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td><strong>click</strong></td>
+        <td><span style="background:#1e3a8a;color:#93c5fd;padding:2px 8px;border-radius:4px;font-family:monospace;">llm (openai/gpt-oss-20b)</span></td>
+        <td>Submit login form</td>
+        <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+        <td>32090.19ms</td>
+        <td><img src='../screenshots/llm_e2e_step_4_1794209713.png' style='max-width:250px; border-radius:4px;'/></td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td><strong>assert_url</strong></td>
+        <td><span style="background:#1e3a8a;color:#93c5fd;padding:2px 8px;border-radius:4px;font-family:monospace;">llm (openai/gpt-oss-20b)</span></td>
+        <td>Verify URL contains /dashboard</td>
+        <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+        <td>1054.82ms</td>
+        <td><img src='../screenshots/llm_e2e_step_5_1794209714.png' style='max-width:250px; border-radius:4px;'/></td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td><strong>assert_title</strong></td>
+        <td><span style="background:#1e3a8a;color:#93c5fd;padding:2px 8px;border-radius:4px;font-family:monospace;">llm (openai/gpt-oss-20b)</span></td>
+        <td>Verify title contains Dashboard</td>
+        <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+        <td>221.01ms</td>
+        <td><img src='../screenshots/llm_e2e_step_6_1794209714.png' style='max-width:250px; border-radius:4px;'/></td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td><strong>assert_visible</strong></td>
+        <td><span style="background:#1e3a8a;color:#93c5fd;padding:2px 8px;border-radius:4px;font-family:monospace;">llm (openai/gpt-oss-20b)</span></td>
+        <td>Verify Account Summary is visible</td>
+        <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+        <td>2316.2ms</td>
+        <td><img src='../screenshots/llm_e2e_step_7_1794209717.png' style='max-width:250px; border-radius:4px;'/></td>
+    </tr>
+    </tbody>
+    </table>
+</body>
+</html>

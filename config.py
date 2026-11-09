@@ -10,8 +10,10 @@ load_dotenv()
 
 # AI / LLM Configuration
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_BASE_URL = "https://api.groq.com/openai/v1"
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_BASE_URL = os.getenv("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+PLANNER_MODE = os.getenv("PLANNER_MODE", "hybrid").lower()
+PLANNER_STRICT = os.getenv("PLANNER_STRICT", "false").lower() == "true"
 
 # Browser Configuration
 HEADLESS = os.getenv("HEADLESS", "false").lower() == "true"

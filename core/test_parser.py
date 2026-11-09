@@ -57,25 +57,25 @@ def decompose_macro_goal(goal: str, target_url: Optional[str] = None) -> Optiona
                 reasoning=f"Navigate to {role} login page"
             ))
 
-        # Enter email/username
+        # Enter email/username (generic across different login forms)
         actions.append(BrowserAction(
             action_type=ActionType.FILL,
-            selector=SemanticSelector(role="textbox", name="Email Address", placeholder="Email Address", description="Email Address"),
+            selector=SemanticSelector(role="textbox", name="Username", placeholder="Username", description="username or email address"),
             value=email,
             is_sensitive=False,
-            reasoning=f"Enter {role} email address"
+            reasoning=f"Enter {role} username or email address"
         ))
 
         # Enter password (marked sensitive)
         actions.append(BrowserAction(
             action_type=ActionType.FILL,
-            selector=SemanticSelector(role="textbox", name="Password", placeholder="Password", description="Password"),
+            selector=SemanticSelector(role="textbox", name="Password", placeholder="Password", description="password"),
             value=password,
             is_sensitive=True,
             reasoning=f"Enter {role} password"
         ))
 
-        # Check Remember Me if applicable
+        # Check Remember Me if applicable on this form
         actions.append(BrowserAction(
             action_type=ActionType.CHECK,
             selector=SemanticSelector(role="checkbox", name="Remember Me", description="Remember Me"),
@@ -85,7 +85,7 @@ def decompose_macro_goal(goal: str, target_url: Optional[str] = None) -> Optiona
         # Click submit / login button
         actions.append(BrowserAction(
             action_type=ActionType.CLICK,
-            selector=SemanticSelector(role="button", name="Sign In to your account", text="Sign In", description="Login submit button"),
+            selector=SemanticSelector(role="button", name="Login", text="Login", description="login or submit button"),
             reasoning="Click login button"
         ))
 

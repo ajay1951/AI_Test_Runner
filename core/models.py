@@ -90,6 +90,9 @@ class BrowserAction(BaseModel):
     operator: AssertionOperator = Field(default=AssertionOperator.CONTAINS)
     timeout_ms: int = Field(default=10000, ge=100, le=60000)
     is_sensitive: bool = Field(default=False, description="Flag indicating value contains passwords or credentials")
+    planner_type: str = Field(default="deterministic_heuristic", description="Origin planner: 'llm' or 'deterministic_heuristic'")
+    model: Optional[str] = Field(default=None, description="Model ID used if planned by LLM")
+    fallback_used: bool = Field(default=False, description="Whether deterministic fallback was used")
     reasoning: Optional[str] = Field(default=None, description="AI rationale for this action")
 
     @field_validator("value", "expected_text")
@@ -101,6 +104,16 @@ class BrowserAction(BaseModel):
             if pat.search(v):
                 raise ValueError(f"Unsafe expression detected in action value: {v}")
         return v
+
+    @model_validator(mode="after")
+    def auto_detect_sensitive(self) -> "BrowserAction":
+        if not self.is_sensitive:
+            desc = (self.selector.description if self.selector and self.selector.description else "").lower()
+            name = (self.selector.name if self.selector and self.selector.name else "").lower()
+            reason = (self.reasoning or "").lower()
+            if "password" in desc or "password" in name or "password" in reason:
+                self.is_sensitive = True
+        return self
 
     def get_display_value(self) -> str:
         """Returns masked string if action contains sensitive credentials."""

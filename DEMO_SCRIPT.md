@@ -1,31 +1,46 @@
-# 5-Minute Video Recording Demo Script
+# 5-Minute Video Recording Demonstration Script
 
-Use this script to guide your 5-minute screen recording for the CloudQA submission.
-
----
-
-### Timing Breakdown (Total: ~5 minutes)
-
-| Timestamp | Topic / Section | Visual on Screen | What to Say / Demonstrate |
-| :--- | :--- | :--- | :--- |
-| **0:00 - 0:45** | **Introduction & Problem Statement** | Open VS Code / IDE showing `AI_Test_Runner` folder structure. | *"Hello CloudQA team! I'm presenting Task 2: Turning plain-English test cases into autonomous browser automation. Our goal is to accept unscripted natural language, parse actions, locate elements without hardcoded selectors, and report PASS/FAIL results."* |
-| **0:45 - 1:45** | **Architecture Overview** | Show `core/` folder: `dom_extractor.py`, `llm_planner.py`, `action_executor.py`. | *"Instead of fragile CSS selectors, we use a hybrid AI-DOM approach. `dom_extractor.py` injects synthetic tags `data-ai-id='ref_X'` into visible interactive elements and extracts labels, roles, and placeholders. `llm_planner.py` uses Groq LLaMA 3.3 to select the right element, backed by a deterministic semantic fallback so tests never crash even without API keys."* |
-| **1:45 - 2:45** | **PHPTravels Execution (Live Browser)** | Run `python runner.py` in the terminal. Watch Chromium launch and execute live. | *"Now let's run the primary requirement: the PHPTravels demo site. In `runner.py`, we supply the instruction: 'Go to phptravels.net/login, type email, type password, check remember me, and click Sign In'. Notice Playwright launching, identifying the inputs dynamically via AI tags, clicking the login button, and capturing step screenshots."* |
-| **2:45 - 3:30** | **Second Website & Unseen Generalization** | Run `pytest tests/test_scenarios.py -v` and `python runner.py --site saucedemo`. | *"A key assessment requirement is proving that nothing is hardcoded to PHPTravels. Here, our pytest suite tests 10 diverse unseen natural-language cases and a completely distinct second website (SauceDemo E-Commerce). All test suites pass cleanly in seconds."* |
-| **3:30 - 4:15** | **Reports & Failure Diagnostics** | Open generated `reports/report_*.html` in the browser. | *"After execution, the system generates an executive HTML and JSON report. It displays overall PASS status, step-by-step breakdown, execution latency in milliseconds, rationale, and captured screenshots."* |
-| **4:15 - 5:00** | **Approach, Limitations & Wrap-Up** | Show `APPROACH_AND_LIMITATIONS.md`. | *"In our engineering notes, we documented our multi-tier fallback hierarchy and known constraints such as cross-origin iframes and anti-bot turnstiles, along with enterprise mitigations. Thank you for your time, and I look forward to discussing this in the next round!"* |
+**Project:** Autonomous AI Test Runner (Task 2)
+**Author:** Senior AI Automation Architect & SDET Engineer
+**Target Submission:** CloudQA Practical Technical Assessment (Task 2)
+**Total Video Duration:** Exactly ~5 minutes (300 seconds)
 
 ---
 
-### Commands to Run During the Video:
+## ⏱️ Video Walkthrough Breakdown
+
+| Timestamp | Presentation Phase | On-Screen Visuals | Spoken Narrative & Actions |
+|:---|:---|:---|:---|
+| **0:00 - 0:40** | **1. Introduction & The SDET Challenge** | Open VS Code displaying the root `AI_Test_Runner` repository structure. | *"Hello CloudQA team! I am pleased to present Task 2: Turning unscripted plain-English test instructions into autonomous, verifiable browser automation. Traditional automation breaks because CSS classes and XPaths are brittle. Naive LLM approaches fail because they hallucinate selectors, click arbitrarily, or produce false passes when no assertion occurred. Our system solves these problems with a hybrid AI-DOM architecture, strict observable-state assertions, and bounded retry resilience."* |
+| **0:40 - 1:20** | **2. Architecture, Strict LLM Mode & Security Guardrails** | Highlight `core/` modules: `dom_extractor.py`, `llm_planner.py`, `action_executor.py`, `models.py`. | *"Here in `core/`, our pipeline works in discrete stages. `dom_extractor.py` injects lightweight synthetic tags `data-ai-id='ref_X'` into visible interactive elements and extracts labels, roles, and placeholders into a compact JSON snapshot under 3 kilobytes. In `llm_planner.py`, we integrate Groq with `openai/gpt-oss-20b`, featuring a strict LLM mode that guarantees zero silent fallback. Crucially, every action is validated by our tag compatibility guard—preventing invalid operations like typing into buttons. Plus, sensitive credentials like passwords are automatically masked with asterisks across all logs and reports."* |
+| **1:20 - 1:50** | **3. Pre-flight LLM Healthcheck** | Execute `python runner.py --check-llm` in terminal and display output. | *"Before test execution, let's verify our LLM gateway using our built-in healthcheck command: `python runner.py --check-llm`. In just two seconds, it confirms Groq API connectivity, validates model accessibility for `openai/gpt-oss-20b`, records roundtrip latency, and saves structured diagnostics to `reports/llm_connectivity.json`."* |
+| **1:50 - 2:45** | **4. Automated Test Suite Execution (29/29 Tests)** | Open terminal and execute: `python -m pytest -v`. Let tests run. | *"Now let's run our comprehensive automated test suite. Watch the terminal as all 29 automated tests execute across LLM planner mocks, error handling, prompt parsing, schema protection, negative assertion integrity, stale reference recovery, and real headless Chromium browser navigation. Notice tests specifically verifying that workflows without assertions strictly fail—preventing false passes. All 29 tests pass with 100% compliance in under 130 seconds."* |
+| **2:45 - 3:55** | **5. Live Multi-Site Demonstration & Strict LLM Execution** | Terminal execution of live sites: (1) PHPTravels Strict LLM, (2) SauceDemo, (3) The Internet Herokuapp. | *"A core requirement of this assessment is proving the engine operates autonomously across multiple real-world domains. Let's run a full customer authentication workflow on PHPTravels in strict LLM mode: `python runner.py --site phptravels --strict-llm`. Notice that 100% of actions are planned by `openai/gpt-oss-20b` with zero fallback. The browser navigates, locates email and password fields, redacts the password, signs in, and verifies the redirect to `/dashboard`, the page Title, and the visible 'Account Summary' heading. We also have live cross-site workflows on SauceDemo and The Internet Herokuapp demonstrating generalizability without hardcoded site selectors."* |
+| **3:55 - 4:35** | **6. Executive HTML & JSON Telemetry** | Open generated report in browser: `reports/phptravels_llm_e2e.html` and inspect JSON. | *"After every run, the runner compiles an executive HTML and structured machine JSON report. Notice the key SDET metrics: step-by-step elapsed milliseconds, captured screenshots, clear badges showing planner attribution—distinguishing whether the LLM or our deterministic heuristic planned the action—the specific model name, `fallback_used: false`, retry attempt counts, and strict masking of passwords."* |
+| **4:35 - 5:00** | **7. Limitations & Wrap-Up** | Display `APPROACH_AND_LIMITATIONS.md` and `FINAL_AUDIT_REPORT.md`. | *"In our engineering documentation, we detail our multi-tier fallback hierarchy and discuss real-world constraints such as cross-origin iframes, HTML5 canvas components, and anti-bot turnstiles, along with enterprise production mitigations. All deliverables are complete and verified. Thank you for your time and consideration!"* |
+
+---
+
+## ⌨️ Exact CLI Commands to Execute During Recording
+
+Keep these exact commands ready to paste into your terminal during the video recording:
+
 ```powershell
-# 1. Run the PHPTravels automation flow:
-python runner.py
+# Step 1: Run pre-flight LLM connectivity check:
+python runner.py --check-llm
 
-# 2. Run the automated pytest suite:
-pytest tests/test_scenarios.py -v
+# Step 2: Run the full 29-test automated verification suite:
+python -m pytest -v
 
-# 3. View the generated HTML report:
-# Double click the latest report in the reports/ folder in your browser
+# Step 3: Run live PHPTravels customer authentication flow in Strict LLM mode:
+python runner.py --site phptravels --strict-llm
+
+# Step 4: Run live SauceDemo E-Commerce authentication flow:
+python runner.py --site saucedemo
+
+# Step 5: Run live custom workflow against The Internet Herokuapp:
+python runner.py "Go to https://the-internet.herokuapp.com/login, Type tomsmith into Username, Type SuperSecretPassword! into Password, Click Login, Verify that Secure Area is visible"
+
+# Step 6: Open the generated executive HTML reports in your browser:
+# Open reports/phptravels_llm_e2e.html in Chrome or Edge
 ```
-

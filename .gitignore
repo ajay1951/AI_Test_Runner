@@ -21,7 +21,16 @@ reports/*.json
 !reports/.gitkeep
 !screenshots/.gitkeep
 
+# Whitelist Verified Assessment Deliverables
+!reports/llm_connectivity.json
+!reports/llm_planner_validation.json
+!reports/phptravels_llm_e2e.json
+!reports/phptravels_llm_e2e.html
+!reports/phptravels_live_validation.json
+!reports/phptravels_live_validation.html
+
+.agents/
+
 # OS Artifacts
 .DS_Store
 Thumbs.db
-

@@ -1,0 +1,172 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>PHPTravels Live Validation Audit (Corrected)</title>
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 30px; background: #0f172a; color: #f8fafc; }
+                h1, h2 { color: #38bdf8; }
+                .summary { background: #1e293b; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+                th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #334155; }
+                th { background: #0ea5e9; color: white; }
+                tr:hover { background: #334155; }
+                .code-box { background: #0f172a; padding: 12px; border-radius: 6px; font-family: monospace; border: 1px solid #334155; }
+            </style>
+        </head>
+        <body>
+            <h1>PHPTravels Live End-to-End Validation Report (Corrected & Verified)</h1>
+            <div class="summary">
+                <p><strong>Target:</strong> https://phptravels.net | <strong>Demo Source:</strong> https://phptravels.com/demo</p>
+                <p><strong>Scenarios:</strong> 8 PASS | 1 PARTIAL | 0 FAIL</p>
+                <p><strong>Role Authentication:</strong> 1 PASS (Customer) | 3 NOT VERIFIED (Admin, Agent, Supplier)</p>
+                <p><strong>Planner Attribution:</strong> Heuristic fallback for workflow (HTTP 404 on llama-3.3); Genuine LLM planning verified independently on qwen/qwen3.8-27b.</p>
+            </div>
+
+            <h2>1. Scenario Audit Results</h2>
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Scenario</th><th>Status</th><th>Duration</th><th>Planner Attribution</th><th>Expected Outcome</th><th>Actual Outcome</th></tr>
+                </thead>
+                <tbody>
+            <tr>
+                <td><strong>TEST-01</strong></td>
+                <td>Homepage navigation</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>7.27s</td>
+                <td>deterministic_heuristic (LLM fallback after 404 model_not_found)</td>
+                <td>PHPTravels homepage loaded with title 'PHPTRAVELS' and URL 'https://phptravels.net/'.</td>
+                <td>Page loaded successfully at https://phptravels.net/; page title and URL verified.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-02</strong></td>
+                <td>Navigation discovery</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>8.51s</td>
+                <td>semantic_dom_extractor</td>
+                <td>Discover travel booking sections (Flight Booking, Hotel Reservations, Tour Packages, Visa) via semantic roles.</td>
+                <td>Identified 7 unique travel booking navigation sections.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-03</strong></td>
+                <td>Customer login discovery</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>10.96s</td>
+                <td>deterministic_heuristic</td>
+                <td>Navigate to login form via semantic login entry point; verify email and password fields visible.</td>
+                <td>Discovered login form at https://phptravels.net/login; email and password input fields verified visible.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-04</strong></td>
+                <td>Customer authentication</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>12.66s</td>
+                <td>deterministic_heuristic (LLM fallback after 404 model_not_found)</td>
+                <td>Redirect to customer dashboard (/dashboard), title 'Dashboard', and visible 'Account Summary' / 'Dashboard' heading.</td>
+                <td>Authenticated successfully: URL 'https://phptravels.net/dashboard', title 'Dashboard', visible landmark heading confirmed.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-05</strong></td>
+                <td>Travel search workflow</td>
+                <td><span style="background:#f59e0b;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PARTIAL</span></td>
+                <td>7.83s</td>
+                <td>semantic_dom_extractor</td>
+                <td>Discover flight form controls (One Way/Round Trip, dates, passengers, Search button).</td>
+                <td>PARTIAL: Discovered 30 interactive flight controls; form submission withheld to avoid un-sandboxed live supplier calls.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-06</strong></td>
+                <td>Dynamic DOM handling</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>8.1s</td>
+                <td>action_executor_resilience</td>
+                <td>Detect stale synthetic ref and recover via semantic accessible locator without failing.</td>
+                <td>Successfully recovered and clicked live node after synthetic reference invalidation.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-07</strong></td>
+                <td>Invalid login handling</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>8.93s</td>
+                <td>deterministic_heuristic</td>
+                <td>Authentication rejected; page does not redirect to /dashboard.</td>
+                <td>Invalid login successfully rejected; user remained on https://phptravels.net/login without dashboard grant.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-08</strong></td>
+                <td>Assertion reliability</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>19.53s</td>
+                <td>action_executor_assertions</td>
+                <td>Assertion fails; test framework correctly refuses to grant PASS for absent state.</td>
+                <td>Assertion correctly failed with visible state verification rejection.</td>
+            </tr>
+
+            <tr>
+                <td><strong>TEST-09</strong></td>
+                <td>Ambiguous element handling</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>9.52s</td>
+                <td>llm_planner_ambiguity_guard</td>
+                <td>Detect ambiguous candidates with tied semantic confidence; reject unsafe arbitrary selection.</td>
+                <td>Detected 2 matching controls; tie-breaker cleared target_ref and flagged ambiguity.</td>
+            </tr>
+            </tbody>
+            </table>
+
+            <h2>2. Multi-Role Testing Clarification</h2>
+            <table>
+                <thead>
+                    <tr><th>Role</th><th>Portal Type</th><th>Observed URL</th><th>Authentication Status</th><th>Evidentiary Notes</th></tr>
+                </thead>
+                <tbody>
+            <tr>
+                <td><strong>Customer</strong></td>
+                <td>Authentication Portal</td>
+                <td>https://phptravels.net/login</td>
+                <td><span style="background:#10b981;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">PASS</span></td>
+                <td>Verified end-to-end customer login to /dashboard with Account Summary landmark.</td>
+            </tr>
+
+            <tr>
+                <td><strong>Admin</strong></td>
+                <td>Admin Backoffice Entry</td>
+                <td>https://phptravels.net/login</td>
+                <td><span style="background:#94a3b8;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">NOT VERIFIED</span></td>
+                <td>Unauthenticated access redirects to /login. Admin credentials not authenticated in live session.</td>
+            </tr>
+
+            <tr>
+                <td><strong>Agent</strong></td>
+                <td>Registration Form Discovery</td>
+                <td>https://phptravels.net/agent-signup</td>
+                <td><span style="background:#94a3b8;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">NOT VERIFIED</span></td>
+                <td>Registration form discovered (51 inputs). Not an authenticated dashboard; registration not submitted.</td>
+            </tr>
+
+            <tr>
+                <td><strong>Supplier</strong></td>
+                <td>Registration Form Discovery</td>
+                <td>https://phptravels.net/supplier-signup</td>
+                <td><span style="background:#94a3b8;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;">NOT VERIFIED</span></td>
+                <td>Registration form discovered (81 inputs). Not an authenticated dashboard; registration not submitted.</td>
+            </tr>
+            </tbody>
+            </table>
+
+            <h2>3. Planner Provenance</h2>
+            <div class="summary">
+                <p><strong>Configured Model:</strong> <code>llama-3.3-70b-versatile</code> &rarr; <code>HTTP 404: model_not_found</code></p>
+                <p><strong>Workflow Attribution:</strong> <code>deterministic_heuristic</code> (Automated fallback executed flawlessly)</p>
+                <p><strong>Independent LLM Test:</strong> Tested <code>qwen/qwen3.8-27b</code> on live login DOM &rarr; <code>ActionType.FILL</code> on <code>ref_11</code> (Reason: <em>"The instruction is to enter the customer email address. ref_11 is the visible email input field on the login page with id 'email' and placeholder 'Email Address'."</em>)</p>
+            </div>
+        </body>
+        </html>

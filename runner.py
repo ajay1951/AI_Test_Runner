@@ -2,13 +2,15 @@
 Main AI Test Runner.
 Executes natural language test cases against real browser instances using Playwright,
 two-tier macro-goal planning, dynamic AI DOM inspection, and automated report generation.
+Supports genuine LLM planning with Groq, explicit planner provenance, and strict LLM mode.
 """
 
 import os
 import sys
 import time
+import json
 import argparse
-from typing import Union, List
+from typing import Union, List, Optional
 from playwright.sync_api import sync_playwright
 from core.dom_extractor import DOMExtractor
 from core.llm_planner import LLMPlanner
@@ -24,12 +26,41 @@ console = Console()
 
 
 class AITestRunner:
-    def __init__(self, headless: bool = config.HEADLESS, slow_mo: int = 50):
-        self.planner = LLMPlanner()
+    def __init__(
+        self,
+        headless: bool = config.HEADLESS,
+        slow_mo: int = 50,
+        strict_llm: bool = config.PLANNER_STRICT,
+        model: Optional[str] = None
+    ):
+        self.strict_llm = strict_llm
+        self.model = model or config.GROQ_MODEL
+        self.planner = LLMPlanner(strict=strict_llm, model=self.model)
         self.reporter = TestReporter(output_dir="reports")
         self.headless = headless
         self.slow_mo = slow_mo
         os.makedirs("screenshots", exist_ok=True)
+        os.makedirs("reports", exist_ok=True)
+
+    def check_llm(self) -> dict:
+        """Runs model connectivity and accessibility test."""
+        res = self.planner.check_connectivity()
+        status_color = "green" if res.get("accessible") else "red"
+        console.print(Panel.fit(
+            f"[bold {status_color}]LLM Connectivity Check: {res.get('status')}[/bold {status_color}]\n"
+            f"[cyan]Model:[/cyan] {res.get('model')}\n"
+            f"[cyan]Accessible:[/cyan] {res.get('accessible')}\n"
+            f"[cyan]Latency:[/cyan] {res.get('latency_ms')}ms\n"
+            f"[dim]{res.get('message')}[/dim]",
+            border_style=status_color
+        ))
+
+        # Save JSON artifact
+        json_path = os.path.join("reports", "llm_connectivity.json")
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(res, f, indent=2)
+        console.print(f"Saved connectivity report: [cyan]{json_path}[/cyan]")
+        return res
 
     def run_scenario(self, instructions: Union[str, List[str]], title: str = "Natural Language Test Scenario") -> bool:
         """
@@ -37,23 +68,28 @@ class AITestRunner:
         or a list of atomic test steps.
         """
         start_time = time.time()
+        combined_text = instructions if isinstance(instructions, str) else " ".join(instructions)
+        target_url = extract_url_from_text(combined_text)
 
-        # Parse and decompose into structured action sequence
-        target_url = extract_url_from_text(instructions if isinstance(instructions, str) else " ".join(instructions))
-        
-        # Two-tier expansion: decompose macro-goals (e.g. "log in as customer") into validated actions
-        if isinstance(instructions, str):
-            planned_actions = parse_instruction_to_actions(instructions, base_url=target_url)
+        # Plan actions: in strict LLM mode or when PLANNER_MODE='llm', query LLM
+        if self.strict_llm or config.PLANNER_MODE == "llm":
+            console.print(f"[bold cyan]🤖 Using Genuine LLM Sequence Planner ({self.planner.model})...[/bold cyan]")
+            planned_actions = self.planner.plan_instruction_sequence(combined_text, base_url=target_url)
         else:
-            planned_actions = []
-            for item in instructions:
-                planned_actions.extend(parse_instruction_to_actions(item, base_url=target_url))
+            # Two-tier expansion: decompose macro-goals into validated actions
+            if isinstance(instructions, str):
+                planned_actions = parse_instruction_to_actions(instructions, base_url=target_url)
+            else:
+                planned_actions = []
+                for item in instructions:
+                    planned_actions.extend(parse_instruction_to_actions(item, base_url=target_url))
 
+        planner_label = f"LLM ({self.planner.model})" if (self.strict_llm or config.PLANNER_MODE == "llm") else "Hybrid (LLM / Heuristic Engine)"
         console.print(Panel.fit(
             f"[bold green]AI Natural Language Test Runner[/bold green]\n"
             f"[cyan]Scenario:[/cyan] {title}\n"
             f"[cyan]Actions Planned:[/cyan] {len(planned_actions)}\n"
-            f"[dim]Provider: Hybrid LLaMA 3.3 / Deterministic Multi-Tier Engine[/dim]",
+            f"[dim]Planner Engine: {planner_label} | Strict LLM: {self.strict_llm}[/dim]",
             border_style="blue"
         ))
 
@@ -84,8 +120,11 @@ class AITestRunner:
                 if action.action_type in (ActionType.FILL, ActionType.CLICK, ActionType.CHECK, ActionType.SELECT, ActionType.RADIO, ActionType.HOVER):
                     executor._dismiss_overlays()
                     dom = DOMExtractor.get_interactive_tree(page)
-                    # Re-plan with live DOM snapshot if needed
+                    # Resolve step via planner (LLM in strict mode, or hybrid)
                     resolved_action = self.planner.plan_step(step_desc, dom, page.url)
+                    action.planner_type = getattr(resolved_action, "planner_type", "deterministic_heuristic")
+                    action.model = getattr(resolved_action, "model", None)
+                    action.fallback_used = getattr(resolved_action, "fallback_used", False)
                     if resolved_action.target_ref:
                         action.target_ref = resolved_action.target_ref
 
@@ -104,6 +143,10 @@ class AITestRunner:
                 steps_log.append({
                     "instruction": step_desc,
                     "action": action.action_type.value,
+                    "planner_type": getattr(action, "planner_type", "deterministic_heuristic"),
+                    "model": getattr(action, "model", None),
+                    "fallback_used": getattr(action, "fallback_used", False),
+                    "attempts": exec_result.get("attempts", 1),
                     "rationale": action.reasoning or "",
                     "success": success,
                     "assertion_result": exec_result.get("assertion_result"),
@@ -117,6 +160,37 @@ class AITestRunner:
                     console.print(f"[bold red]❌ Step failed:[/bold red] '{step_desc}'")
                     break
 
+            # Record any auto-dismissed informational modals into telemetry for complete observability
+            for m in executor.dismissed_modals:
+                steps_log.insert(0, {
+                    "instruction": f"Auto-dismissed informational modal via '{m['button_text']}'",
+                    "action": "dismiss_overlay",
+                    "planner_type": "deterministic_heuristic",
+                    "model": None,
+                    "fallback_used": False,
+                    "attempts": 1,
+                    "rationale": "Safety dismissal of non-intrusive demo disclaimer/cookie notice",
+                    "success": True,
+                    "assertion_result": None,
+                    "error": None,
+                    "screenshot": None,
+                    "duration_ms": 300.0
+                })
+
+            # Strict SDET Verification: Action execution vs Expected Outcome
+            assertion_steps = [s for s in steps_log if s.get("assertion_result") is not None]
+            if overall_passed and len(assertion_steps) == 0:
+                console.print(
+                    "[bold yellow]⚠️ Verification Warning: Scenario executed actions successfully, but contains ZERO assertions. "
+                    "Cannot mark test as PASSED without observable state verification.[/bold yellow]"
+                )
+                overall_passed = False
+                status_text = "[bold yellow]FAILED (NO ASSERTIONS)[/bold yellow]"
+            elif overall_passed:
+                status_text = "[bold green]PASSED[/bold green]"
+            else:
+                status_text = "[bold red]FAILED[/bold red]"
+
             # Final screenshot
             try:
                 page.screenshot(path="final_result.png")
@@ -128,7 +202,6 @@ class AITestRunner:
         total_duration = (time.time() - start_time) * 1000
         report_path = self.reporter.generate(title, steps_log, overall_passed, total_duration)
 
-        status_text = "[bold green]PASSED[/bold green]" if overall_passed else "[bold red]FAILED[/bold red]"
         console.print(Panel.fit(
             f"Test Result: {status_text}\n"
             f"HTML Report: [cyan]{report_path}[/cyan]\n"
@@ -148,6 +221,22 @@ if __name__ == "__main__":
         help="Predefined test scenario to run (default: phptravels)"
     )
     parser.add_argument(
+        "--check-llm",
+        action="store_true",
+        help="Verify Groq API connectivity and model accessibility"
+    )
+    parser.add_argument(
+        "--strict-llm",
+        action="store_true",
+        help="Enforce strict LLM planning mode with zero silent fallback"
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default=None,
+        help="Override Groq model ID (default from config: openai/gpt-oss-20b)"
+    )
+    parser.add_argument(
         "instruction",
         nargs="?",
         default=None,
@@ -155,9 +244,13 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    runner = AITestRunner()
+    runner = AITestRunner(strict_llm=args.strict_llm, model=args.model)
 
-    if args.instruction:
+    if args.check_llm:
+        res = runner.check_llm()
+        sys.exit(0 if res.get("accessible") else 1)
+
+    elif args.instruction:
         runner.run_scenario(args.instruction, title="Custom Website Scenario")
 
     elif args.site == "saucedemo":

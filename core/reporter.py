@@ -71,6 +71,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
       <div class="step-header">
         <div>
           <span class="action-tag">{{ s.action }}</span>
+          {% if s.planner_type %}
+          <span style="background: #1e3a8a; color: #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-family: monospace; margin-left: 6px;">{{ s.planner_type }}</span>
+          {% endif %}
+          {% if s.attempts and s.attempts > 1 %}
+          <span style="background: #78350f; color: #fde68a; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-family: monospace; margin-left: 6px;">{{ s.attempts }} attempts</span>
+          {% endif %}
           <strong style="margin-left: 8px; font-size: 0.95rem;">Step {{ loop.index }}: {{ s.instruction }}</strong>
         </div>
         <span style="font-size: 0.8rem; font-weight: bold; color: {% if s.success %}#10b981{% else %}#ef4444{% endif %};">
@@ -120,13 +126,19 @@ class TestReporter:
         sanitized_steps = []
         for s in steps_data:
             s_copy = dict(s)
+            if "planner_type" not in s_copy:
+                s_copy["planner_type"] = "deterministic_heuristic"
+            if "attempts" not in s_copy:
+                s_copy["attempts"] = 1
             for k in ["instruction", "rationale", "error"]:
                 val = str(s_copy.get(k) or "")
                 if val:
                     # Mask any cleartext password tokens
                     masked = re.sub(r'(password\s+)([^\s,;]+)', r'\1********', val, flags=re.IGNORECASE)
                     masked = re.sub(r'(fill with\s+)([^\s,;]+)', r'\1********', masked, flags=re.IGNORECASE)
-                    masked = re.sub(r'(\bsecret\w*|\bdemouser\b|\bdemoadmin\b)', '********', masked, flags=re.IGNORECASE)
+                    masked = re.sub(r'(type\s+)([^\s,;]+)(\s+into\s+.*password)', r'\1********\3', masked, flags=re.IGNORECASE)
+                    masked = re.sub(r'(enter\s+)([^\s,;]+)(\s+into\s+.*password)', r'\1********\3', masked, flags=re.IGNORECASE)
+                    masked = re.sub(r'(\bsecret\w*|\bdemouser\b|\bdemoadmin\b|SuperSecretPassword!?)', '********', masked, flags=re.IGNORECASE)
                     s_copy[k] = masked
             sanitized_steps.append(s_copy)
 

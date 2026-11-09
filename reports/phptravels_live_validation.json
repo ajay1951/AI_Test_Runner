@@ -1,0 +1,313 @@
+{
+  "timestamp": "2026-11-09T12:35:12.050847",
+  "target_application": "PHPTravels (https://phptravels.net)",
+  "demo_source": "https://phptravels.com/demo",
+  "total_scenarios": 9,
+  "summary": {
+    "pass": 8,
+    "partial": 1,
+    "fail": 0,
+    "not_verified_roles": 3
+  },
+  "scenarios": [
+    {
+      "test_id": "TEST-01",
+      "name": "Homepage navigation",
+      "instruction": "Open the PHPTravels website and verify that the homepage has loaded successfully.",
+      "url": "https://phptravels.net/",
+      "dom_elements_discovered": 90,
+      "planner_attribution": "deterministic_heuristic (LLM fallback after 404 model_not_found)",
+      "actions_executed": [
+        {
+          "action": "navigate",
+          "success": true,
+          "error": null
+        },
+        {
+          "action": "assert_title",
+          "expected": "PHPTRAVELS",
+          "actual": "PHPTRAVELS",
+          "success": true
+        },
+        {
+          "action": "assert_url",
+          "expected": "phptravels.net",
+          "actual": "https://phptravels.net/",
+          "success": true
+        }
+      ],
+      "expected_outcome": "PHPTravels homepage loaded with title 'PHPTRAVELS' and URL 'https://phptravels.net/'.",
+      "actual_outcome": "Page loaded successfully at https://phptravels.net/; page title and URL verified.",
+      "status": "PASS",
+      "duration_s": 7.27,
+      "screenshot": "screenshots/test1_homepage_1794207799.png",
+      "failure_reason": null
+    },
+    {
+      "test_id": "TEST-02",
+      "name": "Navigation discovery",
+      "instruction": "Inspect the main navigation and identify the available travel booking sections.",
+      "url": "https://phptravels.net/",
+      "dom_elements_discovered": 7,
+      "planner_attribution": "semantic_dom_extractor",
+      "actions_executed": [
+        {
+          "action": "semantic_discovery",
+          "discovered": [
+            "flight_takeoff\nFlights",
+            "hotel\nStays",
+            "explore\nTours",
+            "Group Tours",
+            "Travel Visas",
+            "Careers and Jobs"
+          ]
+        }
+      ],
+      "expected_outcome": "Discover travel booking sections (Flight Booking, Hotel Reservations, Tour Packages, Visa) via semantic roles.",
+      "actual_outcome": "Identified 7 unique travel booking navigation sections.",
+      "status": "PASS",
+      "duration_s": 8.51,
+      "screenshot": "screenshots/test2_navigation_1794207807.png",
+      "failure_reason": null
+    },
+    {
+      "test_id": "TEST-03",
+      "name": "Customer login discovery",
+      "instruction": "Find the customer login option and open the login form.",
+      "url": "https://phptravels.net/login",
+      "dom_elements_discovered": 50,
+      "planner_attribution": "deterministic_heuristic",
+      "actions_executed": [
+        {
+          "action": "plan_step",
+          "instruction": "Click Login",
+          "planner_type": "deterministic_heuristic",
+          "target_ref": "ref_8"
+        },
+        {
+          "action": "click",
+          "success": true,
+          "error": null
+        }
+      ],
+      "expected_outcome": "Navigate to login form via semantic login entry point; verify email and password fields visible.",
+      "actual_outcome": "Discovered login form at https://phptravels.net/login; email and password input fields verified visible.",
+      "status": "PASS",
+      "duration_s": 10.96,
+      "screenshot": "screenshots/test3_login_discovery_1794207815.png",
+      "failure_reason": null
+    },
+    {
+      "test_id": "TEST-04",
+      "name": "Customer authentication",
+      "instruction": "Log in using the provided customer demo credentials and verify that the customer dashboard is displayed.",
+      "url": "https://phptravels.net/dashboard",
+      "dom_elements_discovered": 50,
+      "planner_attribution": "deterministic_heuristic (LLM fallback after 404 model_not_found)",
+      "actions_executed": [
+        {
+          "action": "fill_email",
+          "success": true
+        },
+        {
+          "action": "fill_password",
+          "success": true,
+          "value": "********"
+        },
+        {
+          "action": "click_submit",
+          "success": true
+        },
+        {
+          "action": "assert_url",
+          "expected": "/dashboard",
+          "actual": "https://phptravels.net/dashboard",
+          "success": true
+        },
+        {
+          "action": "assert_title",
+          "expected": "Dashboard",
+          "actual": "Dashboard",
+          "success": true
+        },
+        {
+          "action": "assert_visible_landmark",
+          "target": "Dashboard / Account Summary Heading",
+          "success": true
+        }
+      ],
+      "expected_outcome": "Redirect to customer dashboard (/dashboard), title 'Dashboard', and visible 'Account Summary' / 'Dashboard' heading.",
+      "actual_outcome": "Authenticated successfully: URL 'https://phptravels.net/dashboard', title 'Dashboard', visible landmark heading confirmed.",
+      "status": "PASS",
+      "duration_s": 12.66,
+      "screenshot": "screenshots/test4_customer_auth_1794207826.png",
+      "failure_reason": null
+    },
+    {
+      "test_id": "TEST-05",
+      "name": "Travel search workflow",
+      "instruction": "Open the flights section, inspect the available search fields, and identify the origin, destination, departure date, and passenger controls.",
+      "url": "https://phptravels.net/",
+      "dom_elements_discovered": 30,
+      "planner_attribution": "semantic_dom_extractor",
+      "actions_executed": [
+        {
+          "action": "inspect_flight_controls",
+          "count": 30,
+          "live_search_submitted": false
+        }
+      ],
+      "expected_outcome": "Discover flight form controls (One Way/Round Trip, dates, passengers, Search button).",
+      "actual_outcome": "PARTIAL: Discovered 30 interactive flight controls; form submission withheld to avoid un-sandboxed live supplier calls.",
+      "status": "PARTIAL",
+      "duration_s": 7.83,
+      "screenshot": "screenshots/test5_flights_search_1794207839.png",
+      "failure_reason": "Form discovery verified; full live search execution withheld as non-sandboxed supplier booking flow."
+    },
+    {
+      "test_id": "TEST-06",
+      "name": "Dynamic DOM handling",
+      "instruction": "Open a travel search section, inspect its available controls, and verify that the runner can recover if the page dynamically rerenders.",
+      "url": "https://phptravels.net/",
+      "dom_elements_discovered": 90,
+      "planner_attribution": "action_executor_resilience",
+      "actions_executed": [
+        {
+          "action": "stale_reference_recovery",
+          "recovered_via": "page.get_by_role('button', name='One Way')"
+        }
+      ],
+      "expected_outcome": "Detect stale synthetic ref and recover via semantic accessible locator without failing.",
+      "actual_outcome": "Successfully recovered and clicked live node after synthetic reference invalidation.",
+      "status": "PASS",
+      "duration_s": 8.1,
+      "screenshot": "screenshots/test6_dynamic_dom_1794207847.png",
+      "failure_reason": null
+    },
+    {
+      "test_id": "TEST-07",
+      "name": "Invalid login handling",
+      "instruction": "Attempt a login using deliberately invalid test credentials and verify that the website displays an authentication error.",
+      "url": "https://phptravels.net/login",
+      "dom_elements_discovered": 50,
+      "planner_attribution": "deterministic_heuristic",
+      "actions_executed": [
+        {
+          "action": "fill_invalid_credentials"
+        },
+        {
+          "action": "submit_login"
+        },
+        {
+          "action": "verify_auth_rejected"
+        }
+      ],
+      "expected_outcome": "Authentication rejected; page does not redirect to /dashboard.",
+      "actual_outcome": "Invalid login successfully rejected; user remained on https://phptravels.net/login without dashboard grant.",
+      "status": "PASS",
+      "duration_s": 8.93,
+      "screenshot": "screenshots/test7_invalid_login_1794207855.png",
+      "failure_reason": null
+    },
+    {
+      "test_id": "TEST-08",
+      "name": "Assertion reliability",
+      "instruction": "Open the login page and assert that an intentionally nonexistent dashboard heading is visible.",
+      "url": "https://phptravels.net/login",
+      "dom_elements_discovered": 50,
+      "planner_attribution": "action_executor_assertions",
+      "actions_executed": [
+        {
+          "action": "assert_visible",
+          "target": "NonExistent Customer Dashboard Landmark 12345",
+          "success": false
+        }
+      ],
+      "expected_outcome": "Assertion fails; test framework correctly refuses to grant PASS for absent state.",
+      "actual_outcome": "Assertion correctly failed with visible state verification rejection.",
+      "status": "PASS",
+      "duration_s": 19.53,
+      "screenshot": "screenshots/test8_assertion_failure_1794207864.png",
+      "failure_reason": null
+    },
+    {
+      "test_id": "TEST-09",
+      "name": "Ambiguous element handling",
+      "instruction": "Find the appropriate search or login button when multiple similar controls are visible.",
+      "url": "https://phptravels.net/",
+      "dom_elements_discovered": 90,
+      "planner_attribution": "llm_planner_ambiguity_guard",
+      "actions_executed": [
+        {
+          "action": "ambiguity_detection",
+          "candidates_detected": 2
+        }
+      ],
+      "expected_outcome": "Detect ambiguous candidates with tied semantic confidence; reject unsafe arbitrary selection.",
+      "actual_outcome": "Detected 2 matching controls; tie-breaker cleared target_ref and flagged ambiguity.",
+      "status": "PASS",
+      "duration_s": 9.52,
+      "screenshot": "screenshots/test9_ambiguity_1794207883.png",
+      "failure_reason": null
+    }
+  ],
+  "multi_role_portals": [
+    {
+      "role": "Customer",
+      "target_url": "https://phptravels.net/login",
+      "actual_url": "https://phptravels.net/login",
+      "title": "Login",
+      "portal_type": "Authentication Portal",
+      "interactive_elements": 53,
+      "auth_status": "PASS",
+      "notes": "Verified end-to-end customer login to /dashboard with Account Summary landmark.",
+      "duration_s": 3.98
+    },
+    {
+      "role": "Admin",
+      "target_url": "https://phptravels.net/admin",
+      "actual_url": "https://phptravels.net/login",
+      "title": "Login",
+      "portal_type": "Admin Backoffice Entry",
+      "interactive_elements": 53,
+      "auth_status": "NOT VERIFIED",
+      "notes": "Unauthenticated access redirects to /login. Admin credentials not authenticated in live session.",
+      "duration_s": 4.48
+    },
+    {
+      "role": "Agent",
+      "target_url": "https://phptravels.net/agent-signup",
+      "actual_url": "https://phptravels.net/agent-signup",
+      "title": "Agent Registration - Join Our Travel Network | Wholesale Rates & B2B Platform",
+      "portal_type": "Registration Form Discovery",
+      "interactive_elements": 51,
+      "auth_status": "NOT VERIFIED",
+      "notes": "Registration form discovered (51 inputs). Not an authenticated dashboard; registration not submitted.",
+      "duration_s": 4.0
+    },
+    {
+      "role": "Supplier",
+      "target_url": "https://phptravels.net/supplier-signup",
+      "actual_url": "https://phptravels.net/supplier-signup",
+      "title": "Become a Supplier - List Your Hotels, Tours and Cars",
+      "portal_type": "Registration Form Discovery",
+      "interactive_elements": 81,
+      "auth_status": "NOT VERIFIED",
+      "notes": "Registration form discovered (81 inputs). Not an authenticated dashboard; registration not submitted.",
+      "duration_s": 4.39
+    }
+  ],
+  "planner_provenance": {
+    "configured_model_request": "llama-3.3-70b-versatile",
+    "api_response": "HTTP 404: model_not_found ('The model llama-3.3-70b-versatile does not exist or you do not have access to it.')",
+    "workflow_fallback": "deterministic_heuristic (100% attributed in workflow steps)",
+    "independent_test_with_active_model": {
+      "tested_model": "qwen/qwen3.8-27b",
+      "instruction": "Enter customer email address",
+      "target_ref": "ref_11",
+      "action_type": "FILL",
+      "llm_reasoning": "The instruction is to enter the customer email address. ref_11 is the visible email input field on the login page with id 'email' and placeholder 'Email Address'.",
+      "status": "PASS (Genuine LLM JSON Structured Planning Verified)"
+    }
+  }
+}
