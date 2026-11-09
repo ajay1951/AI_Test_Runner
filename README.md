@@ -185,10 +185,10 @@ Every run generates structured JSON metrics under `reports/report_<timestamp>.js
 ```json
 {
   "title": "PHPTravels Customer Authentication - Strict LLM Mode",
-  "timestamp": "2026-11-09 13:05:42",
+  "timestamp": "2026-11-09 20:02:31",
   "passed": true,
-  "duration_sec": 58.34,
-  "passed_count": 7,
+  "duration_sec": 14.05,
+  "passed_count": 8,
   "failed_count": 0,
   "steps": [
     {

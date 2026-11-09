@@ -119,14 +119,23 @@ class AITestRunner:
                 # If action requires DOM element and has no ref yet, inspect live DOM
                 if action.action_type in (ActionType.FILL, ActionType.CLICK, ActionType.CHECK, ActionType.SELECT, ActionType.RADIO, ActionType.HOVER):
                     executor._dismiss_overlays()
-                    dom = DOMExtractor.get_interactive_tree(page)
-                    # Resolve step via planner (LLM in strict mode, or hybrid)
-                    resolved_action = self.planner.plan_step(step_desc, dom, page.url)
-                    action.planner_type = getattr(resolved_action, "planner_type", "deterministic_heuristic")
-                    action.model = getattr(resolved_action, "model", None)
-                    action.fallback_used = getattr(resolved_action, "fallback_used", False)
-                    if resolved_action.target_ref:
-                        action.target_ref = resolved_action.target_ref
+                    existing_loc = None
+                    if action.target_ref or action.selector:
+                        try:
+                            existing_loc = executor._resolve_locator(action)
+                        except Exception:
+                            existing_loc = None
+
+                    # Only query live DOM step planner if element cannot be resolved from planned action selector
+                    if not existing_loc or existing_loc.count() == 0:
+                        dom = DOMExtractor.get_interactive_tree(page)
+                        # Resolve step via planner (LLM in strict mode, or hybrid)
+                        resolved_action = self.planner.plan_step(step_desc, dom, page.url)
+                        action.planner_type = getattr(resolved_action, "planner_type", action.planner_type)
+                        action.model = getattr(resolved_action, "model", action.model)
+                        action.fallback_used = getattr(resolved_action, "fallback_used", action.fallback_used)
+                        if resolved_action.target_ref:
+                            action.target_ref = resolved_action.target_ref
 
                 # Execute action
                 exec_result = executor.execute(action)
@@ -135,7 +144,7 @@ class AITestRunner:
                 # Capture step screenshot
                 screenshot_filename = f"screenshots/step_{idx}_{int(time.time())}.png"
                 try:
-                    page.screenshot(path=screenshot_filename)
+                    page.screenshot(path=screenshot_filename, timeout=2000)
                     step_screenshot = screenshot_filename
                 except Exception:
                     pass

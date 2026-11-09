@@ -108,7 +108,19 @@ class ActionExecutor:
         if action.target_ref:
             loc = self.page.locator(f"[data-ai-id='{action.target_ref}']")
             if loc.count() > 0:
-                return loc.first
+                # Sanity guard: if clicking login/submit, do not click a reset/forgot password link
+                if action.action_type == ActionType.CLICK:
+                    r_text = (action.reasoning or "").lower()
+                    if any(k in r_text for k in ["login", "sign in", "submit"]):
+                        try:
+                            txt = (loc.first.inner_text() or "").lower()
+                            href = (loc.first.get_attribute("href") or "").lower()
+                            if any(bad in txt or bad in href for bad in ["forgot", "reset", "signup", "register"]):
+                                loc = None
+                        except Exception:
+                            pass
+                if loc and loc.count() > 0:
+                    return loc.first
 
         # Tier 2 - 5: Semantic selector
         if action.selector:
@@ -195,7 +207,7 @@ class ActionExecutor:
                             # Support common authentication/submission synonyms
                             txt_lower = txt.lower()
                             if any(k in txt_lower for k in ["login", "sign in", "log in", "signin", "submit"]):
-                                loc = self.page.locator("button[type='submit'], input[type='submit'], button:has-text('Sign In'), button:has-text('Login'), button:has-text('Log In')")
+                                loc = self.page.locator("button:visible:has-text('Sign In'), button:visible:has-text('Login'), button:visible:has-text('Log In'), form button[type='submit']:visible, button[type='submit']:visible, input[type='submit']:visible")
                         if loc.count() == 0:
                             loc = self.page.get_by_text(txt, exact=False)
                     else:
@@ -225,11 +237,11 @@ class ActionExecutor:
         # Direct heuristic fallback from reasoning
         reasoning = (action.reasoning or "").lower()
         if "sign in" in reasoning or "login" in reasoning:
-            loc = self.page.locator("button:has-text('Sign In'), button:has-text('Login'), button[type='submit']")
+            loc = self.page.locator("button:visible:has-text('Sign In'), button:visible:has-text('Login'), button:visible:has-text('Log In'), form button[type='submit']:visible, button[type='submit']:visible")
             if loc.count() > 0:
                 return loc.first
         elif "submit" in reasoning:
-            loc = self.page.locator("button[type='submit'], input[type='submit']")
+            loc = self.page.locator("form button[type='submit']:visible, button[type='submit']:visible, input[type='submit']:visible")
             if loc.count() > 0:
                 return loc.first
 
@@ -272,7 +284,10 @@ class ActionExecutor:
                     if not loc:
                         raise ValueError(f"Could not locate input field for target: {action.selector}")
                     self._validate_element_compatibility(loc, act_type)
-                    loc.scroll_into_view_if_needed()
+                    try:
+                        loc.scroll_into_view_if_needed(timeout=2000)
+                    except Exception:
+                        pass
                     try:
                         loc.fill(action.value or "", timeout=min(action.timeout_ms, 3000))
                     except Exception:
@@ -287,12 +302,15 @@ class ActionExecutor:
                     if not loc:
                         raise ValueError(f"Could not locate element to click for target: {action.selector}")
                     self._validate_element_compatibility(loc, act_type)
-                    loc.scroll_into_view_if_needed()
+                    try:
+                        loc.scroll_into_view_if_needed(timeout=2000)
+                    except Exception:
+                        pass
                     try:
                         loc.click(timeout=min(action.timeout_ms, 3000))
                     except Exception:
                         self._dismiss_overlays()
-                        loc.click(force=True, timeout=3000)
+                        loc.click(force=True, timeout=2000)
                     result["success"] = True
                     return result
 
